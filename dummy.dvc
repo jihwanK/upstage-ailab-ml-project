@@ -1,0 +1,5 @@
+outs:
+- md5: 9746bd4d817846c9016a247e2c521951
+  size: 28
+  hash: md5
+  path: dummy
