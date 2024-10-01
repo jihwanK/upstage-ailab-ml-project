@@ -135,7 +135,7 @@ def extract_reviews(driver, product_info_dict):
             review_list = driver.find_elements(By.CSS_SELECTOR, "div.review_list_wrap > ul#gdasList > li")
 
             for idx, review in enumerate(review_list):
-                print(f"Crawling {idx}th review")
+                # print(f"Crawling {idx}th review")
 
                 try:
                     WebDriverWait(driver, 10).until(
@@ -253,17 +253,17 @@ def scrape_product_reviews(product_url_dict):
                     reviewer_list.update(reviews["user_code"])
 
                     time.sleep(2)
+                    
+                    try:
+                        pd.DataFrame(reviews).to_csv(f"../../data/reviews/{cat_name}_{product_info['product_name']}_reviews.csv", index=False)
+                        pd.DataFrame(product_info_dict).to_csv(f"../../data/products/{cat_name}_{product_info['product_name']}.csv", index=False)
+                    except Exception as e:
+                        print(f"Error saving data for category {cat_name}_{product_info['product_name']}")
+                        logging.error(f"Error saving data for category {cat_name}_{product_info['product_name']}: {e}")
 
             except Exception as e:
                 print(f"Error processing URL {url} in category {cat_name}")
                 logging.error(f"Error processing URL {url} in category {cat_name}: {e}")
-
-        try:
-            pd.DataFrame(reviews).to_csv(f"../../data/reviews/{cat_name}_reviews.csv", index=False)
-            pd.DataFrame(product_info_dict).to_csv(f"../../data/products/{cat_name}_products.csv", index=False)
-        except Exception as e:
-            print(f"Error saving data for category {cat_name}")
-            logging.error(f"Error saving data for category {cat_name}: {e}")
 
     try:
         pd.DataFrame(list(reviewer_list), columns=["user_code"]).to_csv("../../data/reviewers.csv", index=False)
@@ -276,8 +276,9 @@ def scrape_product_reviews(product_url_dict):
 if __name__ == "__main__":
     product_url_dict = pd.read_csv("product_url.csv").to_dict("list")
     try:
-        scrape_product_reviews({"선케어": product_url_dict["선케어"]})
-        # scrape_product_reviews(product_url_dict)
+        # scrape_product_reviews({"선케어": product_url_dict["선케어"]})
+        # del product_url_dict["선케어"]
+        scrape_product_reviews(product_url_dict)
     finally:
         pd.DataFrame(error_list).to_csv("../../data/error/error_list.csv", index=False)
     
