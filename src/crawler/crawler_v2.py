@@ -4,6 +4,7 @@ from collections import defaultdict
 import logging
 
 import pandas as pd
+from tqdm import tqdm
 
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
@@ -18,6 +19,9 @@ logging.getLogger(__name__).setLevel(logging.INFO)
 
 chrome_options = Options()
 chrome_options.add_argument("--headless")
+chrome_options.add_argument('--disable-gpu')
+chrome_options.add_argument('--no-sandbox')
+chrome_options.add_argument('--disable-blink-features=AutomationControlled')
 service = Service()
 
 error_list = defaultdict(list)
@@ -123,7 +127,7 @@ def extract_reviews(driver, product_info_dict):
         error_list["reason"].append("review count error")
         return review_info_dict, review_cnt
 
-    for page in range(1, pages + 1):
+    for page in tqdm(range(1, pages + 1), desc="Page", position=2, leave=False):
         try:
             if page != 1:
                 next_page_element = WebDriverWait(driver, 10).until(
@@ -218,7 +222,7 @@ def extract_reviews(driver, product_info_dict):
             error_list["url"].append(product_info_dict["url"])
             error_list["reason"].append(f"navigating to page error on {page}")
 
-        print(f"crawling the {page}/{pages} finished")
+        # print(f"crawling the {page}/{pages} finished")
     logging.info("[extract_reviews] FINISH")
 
     return review_info_dict, review_cnt, overall_rating
@@ -227,14 +231,14 @@ def extract_reviews(driver, product_info_dict):
 def scrape_product_reviews(product_url_dict):
     reviewer_list = set()
 
-    for cat_name in product_url_dict:
+    for cat_name in tqdm(product_url_dict, desc="Category", position=0):
         product_info_dict = defaultdict(list)
 
-        for url in product_url_dict[cat_name]:
+        for url in tqdm(product_url_dict[cat_name], desc="URL", position=1, leave=False):
             try:
                 with webdriver.Chrome(service=service, options=chrome_options) as driver:
                     driver.get(url)
-                    print(f"Scraping URL: {url}")
+                    # print(f"Scraping URL: {url}")
 
                     product_info = extract_product_info(driver, url)
                     ingredients = extract_ingredients(driver, url)
@@ -256,7 +260,6 @@ def scrape_product_reviews(product_url_dict):
                     
                     try:
                         pd.DataFrame(reviews).to_csv(f"../../data/reviews/{cat_name}_{product_info['product_name']}_reviews.csv", index=False)
-                        pd.DataFrame(product_info_dict).to_csv(f"../../data/products/{cat_name}_{product_info['product_name']}.csv", index=False)
                     except Exception as e:
                         print(f"Error saving data for category {cat_name}_{product_info['product_name']}")
                         logging.error(f"Error saving data for category {cat_name}_{product_info['product_name']}: {e}")
@@ -264,7 +267,12 @@ def scrape_product_reviews(product_url_dict):
             except Exception as e:
                 print(f"Error processing URL {url} in category {cat_name}")
                 logging.error(f"Error processing URL {url} in category {cat_name}: {e}")
-
+        
+        try:
+            pd.DataFrame(product_info_dict).to_csv(f"../../data/products/{cat_name}.csv", index=False)
+        except Exception as e:
+            print(f"Error saving data for category {cat_name}")
+            logging.error(f"Error saving data for category {cat_name}: {e}")
     try:
         pd.DataFrame(list(reviewer_list), columns=["user_code"]).to_csv("../../data/reviewers.csv", index=False)
     except Exception as e:
