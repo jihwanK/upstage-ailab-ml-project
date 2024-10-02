@@ -3,6 +3,10 @@ import time
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
+import logging
+from tqdm import tqdm
+
+logging.basicConfig(filename="../../logs/url_crawler.log", filemode='a', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 cat_nums = [
     10000010011, 10000010002, 10000010012, 10000010006, 10000010008,
@@ -18,10 +22,10 @@ cat_names = [
 ]
 
 product_url_dict = {}
-for i, cat_num in enumerate(cat_nums):
+for i, cat_num in enumerate(tqdm(cat_nums)):
     url_list = []
     page = f"https://www.oliveyoung.co.kr/store/main/getBestList.do?dispCatNo=900000100100001&fltDispCatNo={cat_num}"
-    print(f"[START] Crawl {cat_names[i]} URLs")
+    logging.info("[START] Crawl %s URLs", cat_names[i])
 
     html = requests.get(page.format(cat_num), timeout=100).text
     soup = BeautifulSoup(html, "html.parser")
@@ -32,6 +36,6 @@ for i, cat_num in enumerate(cat_nums):
     product_url_dict[cat_names[i]] = url_list
     time.sleep(2)
 
-    print(f"[FINISH] Crawl {cat_names[i]} URLs")
+    logging.info("[FINISH] Crawl %s URLs", cat_names[i])
 
 pd.DataFrame(product_url_dict).to_csv("../../data/product_url.csv", index=False)
