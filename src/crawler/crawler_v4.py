@@ -90,7 +90,7 @@ def extract_with_error_handling(extraction_func, css_selector, url, default=None
 def extract_product_info(driver, url):
     logging.info("[extract_product_info] Start")
     brand_name, product_name, product_flags = None, None, []
-    url, review_cnt, overall_rating = None, None, None
+    review_cnt, overall_rating = None, None
 
     try:
         WebDriverWait(driver, 10).until(
@@ -107,15 +107,15 @@ def extract_product_info(driver, url):
         product_name = extract_element_text(driver, product_info, "p.prd_name", url)
         product_flags = extract_element_text_list(driver, product_info, "p.prd_flag span", url)
 
-        review_cnt_txt = extract_element_text(driver, product_social_info, "p#repReview > b", url)
-        review_cnt_match = re.search(r"'([A-Za-z0-9+/=]+)'", review_cnt_txt)
-        review_cnt = review_cnt_match.group(1) if review_cnt_match else None
-        overall_rating = extract_element_text(driver, product_social_info, "p#repReview > em", url)
+        review_cnt_txt = extract_element_text(driver, product_social_info, "p#repReview > em", url)
+        review_cnt = int(review_cnt_txt.strip("()").strip("건").replace(",", ""))
+        overall_rating = float(extract_element_text(driver, product_social_info, "p#repReview > b", url))
 
     except Exception as e:
         logging.error("Error extracting product info from %s \n%s", url, e)
 
-    logging.info("[extract_product_info] Finished with: brand_name=%s, product_name=%s, review_cnt=%s, overall_rating=%s",
+
+    logging.info("[extract_product_info] Finished with: brand_name=%s, product_name=%s, review_cnt=%d, overall_rating=%f",
                  brand_name, product_name, review_cnt, overall_rating)
 
     return {
@@ -138,9 +138,9 @@ def extract_ingredients(driver, url):
         )
         element.click()
 
-        WebDriverWait(driver, 10).until(
-            EC.visibility_of_all_elements_located((By.CSS_SELECTOR, "div#artcInfo > dl.detail_info_list"))
-        )
+        # WebDriverWait(driver, 10).until(
+        #     EC.visibility_of_all_elements_located((By.CSS_SELECTOR, "div#artcInfo > dl.detail_info_list"))
+        # )
 
         product_info_list = extract_element_text_list(driver, driver, "div#artcInfo > dl.detail_info_list", url)
 
@@ -164,7 +164,7 @@ def extract_ingredients(driver, url):
 
 ########################################################################################################################
 
-def extract_reviews(driver, product_info_dict):
+def extract_reviews(driver, product_info):
     logging.info("[extract_reviews] START")
 
     review_info_dict = defaultdict(list)
@@ -179,19 +179,18 @@ def extract_reviews(driver, product_info_dict):
             EC.visibility_of_all_elements_located((By.CSS_SELECTOR, "div.review_list_wrap"))
         )
 
-        pages = min(100, (product_info_dict["review_cnt"] // 10) + 1)
-
     except (NoSuchElementException, TimeoutException, StaleElementReferenceException) as e:
-        logging.error("%s occurred while preparing reviews for %s \n%s", type(e).__name__, product_info_dict["url"], e)
-        error_list["url"].append(product_info_dict["url"])
+        logging.error("%s occurred while preparing reviews for %s \n%s", type(e).__name__, product_info["url"], e)
+        error_list["url"].append(product_info["url"])
         error_list["reason"].append("review count error")
         return review_info_dict
     except Exception as e:
-        logging.error("Unexpected %s occurred while preparing reviews for %s \n%s", type(e).__name__, product_info_dict["url"], e)
-        error_list["url"].append(product_info_dict["url"])
+        logging.error("Unexpected %s occurred while preparing reviews for %s \n%s", type(e).__name__, product_info["url"], e)
+        error_list["url"].append(product_info["url"])
         error_list["reason"].append("review count error")
         return review_info_dict
 
+    pages = min(100, (product_info["review_cnt"] // 10) + 1)
     for page in tqdm(range(1, pages + 1), desc="Page", position=1, leave=False):
         try:
             if page != 1:
@@ -201,7 +200,7 @@ def extract_reviews(driver, product_info_dict):
                 next_page_element.click()
                 time.sleep(1.5)
 
-            review_list = extract_element_list(driver, driver, "div.review_list_wrap > ul#gdasList > li", product_info_dict["url"])
+            review_list = extract_element_list(driver, driver, "div.review_list_wrap > ul#gdasList > li", product_info["url"])
             # review_list = driver.find_elements(By.CSS_SELECTOR, "div.review_list_wrap > ul#gdasList > li")
 
             for idx, review in enumerate(review_list):
@@ -214,40 +213,40 @@ def extract_reviews(driver, product_info_dict):
                     )
 
                     # User Information
-                    user_info = extract_element_text(driver, review, "div.info", product_info_dict["url"])
+                    user_info = extract_element_text(driver, review, "div.info", product_info["url"])
                     
-                    user_link = extract_element(driver, review, "a", product_info_dict["url"])
+                    user_link = extract_element(driver, review, "a", product_info["url"])
                     
                     user_code_match = re.search(r"'([A-Za-z0-9+/=]+)'", user_link.get_attribute("onclick"))
                     user_code = user_code_match.group(1) if user_code_match else None
                     
-                    user_id = extract_element_text(driver, user_info, "p.info_user > a.id", product_info_dict["url"])
+                    user_id = extract_element_text(driver, user_info, "p.info_user > a.id", product_info["url"])
 
-                    user_skin_type = extract_element_text_list(driver, user_info, "p.tag > span", product_info_dict["url"])
+                    user_skin_type = extract_element_text_list(driver, user_info, "p.tag > span", product_info["url"])
                     
-                    user_tag_list = extract_element_text_list(driver, user_info, "div.badge > a.point_flag", product_info_dict["url"])
+                    user_tag_list = extract_element_text_list(driver, user_info, "div.badge > a.point_flag", product_info["url"])
                     user_tag = ",".join(user_tag_list)
 
 
                     # Review Information
-                    review_info = extract_element(driver, review, "div.review_cont", product_info_dict["url"])
+                    review_info = extract_element(driver, review, "div.review_cont", product_info["url"])
                     
-                    review_rating = extract_element_text(driver, review_info, "div.score_area > span.review_point > span.point", product_info_dict["url"])
+                    review_rating = extract_element_text(driver, review_info, "div.score_area > span.review_point > span.point", product_info["url"])
                     
-                    review_date = extract_element_text(driver, review_info, "div.score_area > span.date", product_info_dict["url"])
+                    review_date = extract_element_text(driver, review_info, "div.score_area > span.date", product_info["url"])
 
-                    purchase_channel = extract_element_text(driver, review_info, "div.score_area > span.ico_offlineStore", product_info_dict["url"]) or "온라인"
+                    purchase_channel = extract_element_text(driver, review_info, "div.score_area > span.ico_offlineStore", product_info["url"]) or "온라인"
 
                     review_poll = {}
-                    poll_samples = extract_element_list(driver, review_info, "div.poll_sample dl.poll_type1", product_info_dict["url"])
+                    poll_samples = extract_element_list(driver, review_info, "div.poll_sample dl.poll_type1", product_info["url"])
                     for poll_sample in poll_samples:
-                        poll_question = extract_element_text(driver, poll_sample, "dt", product_info_dict["url"]).text.strip()
-                        poll_answer = extract_element_text(driver, poll_sample, "dd", product_info_dict["url"]).text.strip()
+                        poll_question = extract_element_text(driver, poll_sample, "dt", product_info["url"]).text.strip()
+                        poll_answer = extract_element_text(driver, poll_sample, "dd", product_info["url"]).text.strip()
                         review_poll[poll_question] = poll_answer
 
-                    review_text = extract_element_text(driver, review_info, "div.txt_inner", product_info_dict["url"])
+                    review_text = extract_element_text(driver, review_info, "div.txt_inner", product_info["url"])
 
-                    recommend_num = extract_element_text(driver, review_info, "div.recom_area button span.num", product_info_dict["url"])
+                    recommend_num = extract_element_text(driver, review_info, "div.recom_area button span.num", product_info["url"])
 
 
                     # Insert information
@@ -255,8 +254,8 @@ def extract_reviews(driver, product_info_dict):
                     review_info_dict["user_code"].append(user_code)
                     review_info_dict["user_skintype"].append(",".join(user_skin_type))
                     review_info_dict["user_tag"].append(user_tag)
-                    review_info_dict["brand_name"].append(product_info_dict["brand_name"])
-                    review_info_dict["product_name"].append(product_info_dict["product_name"])
+                    review_info_dict["brand_name"].append(product_info["brand_name"])
+                    review_info_dict["product_name"].append(product_info["product_name"])
                     review_info_dict["review_rating"].append(review_rating)
                     review_info_dict["review_date"].append(review_date)
                     review_info_dict["purchase_channel"].append(purchase_channel)
@@ -266,21 +265,21 @@ def extract_reviews(driver, product_info_dict):
                     review_info_dict["recommend_num"].append(recommend_num)
 
                 except (NoSuchElementException, TimeoutException, StaleElementReferenceException) as e:
-                    logging.error("%s occurred while extracting review[%d] on page %d for %s \n%s", type(e).__name__, idx, page, product_info_dict["url"], e)
-                    error_list["url"].append(product_info_dict["url"])
+                    logging.error("%s occurred while extracting review[%d] on page %d for %s \n%s", type(e).__name__, idx, page, product_info["url"], e)
+                    error_list["url"].append(product_info["url"])
                     error_list["reason"].append(f"extracting review error review[{idx}] on page {page}")
                 except Exception as e:
-                    logging.error("Unexpected %s occurred while extracting review[%d] on page %d for %s \n%s", type(e).__name__, idx, page, product_info_dict["url"], e)
-                    error_list["url"].append(product_info_dict["url"])
+                    logging.error("Unexpected %s occurred while extracting review[%d] on page %d for %s \n%s", type(e).__name__, idx, page, product_info["url"], e)
+                    error_list["url"].append(product_info["url"])
                     error_list["reason"].append(f"extracting review error review[{idx}] on page {page}")
         
         except (NoSuchElementException, TimeoutException, StaleElementReferenceException) as e:
-            logging.error("%s occurred while navigating to page %d for %s \n%s", type(e).__name__, page, product_info_dict["url"], e)
-            error_list["url"].append(product_info_dict["url"])
+            logging.error("%s occurred while navigating to page %d for %s \n%s", type(e).__name__, page, product_info["url"], e)
+            error_list["url"].append(product_info["url"])
             error_list["reason"].append(f"navigating to page error on {page}")
         except Exception as e:
-            logging.error("Unexpected %s occurred while navigating to page %d for %s \n%s", type(e).__name__, page, product_info_dict["url"], e)
-            error_list["url"].append(product_info_dict["url"])
+            logging.error("Unexpected %s occurred while navigating to page %d for %s \n%s", type(e).__name__, page, product_info["url"], e)
+            error_list["url"].append(product_info["url"])
             error_list["reason"].append(f"navigating to page error on {page}")
 
     logging.info("[extract_reviews] FINISH")
