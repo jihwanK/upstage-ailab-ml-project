@@ -34,7 +34,7 @@ for i, cat_num in enumerate(tqdm(cat_nums)):
     for product in products:
         url_list.append(product.find("a").attrs["href"])
     product_url_dict[cat_names[i]] = url_list
-    pd.DataFrame(url_list, columns=["URL"]).to_csv(f"../../data/url/{cat_names[i]}_url.csv", index=False)
+    pd.DataFrame(url_list, columns=[cat_names[i]]).to_csv(f"../../data/url/url_{i}.csv", index=False)
     time.sleep(2)
 
     logging.info("[FINISH] Crawl %s URLs", cat_names[i])
