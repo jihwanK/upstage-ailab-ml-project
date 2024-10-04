@@ -18,7 +18,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import NoSuchElementException, TimeoutException, StaleElementReferenceException
 
-logging.basicConfig(filename="./logs/crawler.log", filemode='a', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(filename="../../logs/crawler.log", filemode='a', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 chrome_options = Options()
 chrome_options.add_argument("--headless")
@@ -335,8 +335,8 @@ def scrape_product_reviews(product_url_dict):
             time.sleep(5)
 
             try:
-                os.makedirs(f"./data/reviews/{cat_name}", exist_ok=True)
-                pd.DataFrame(reviews).to_csv(f"./data/reviews/{cat_name}/{cat_name}_{product_num}_reviews.csv", index=False)
+                os.makedirs(f"../../data/reviews/{cat_name}", exist_ok=True)
+                pd.DataFrame(reviews).to_csv(f"../../data/reviews/{cat_name}/{cat_name}_{product_num}_reviews.csv", index=False)
                 logging.info("Safely saved reviews for %s", product_info["product_name"])
             except Exception as e:
                 logging.error("Error saving reviews for %s_%s \n%s", cat_name, product_info["product_name"], e)
@@ -344,13 +344,13 @@ def scrape_product_reviews(product_url_dict):
                 product_num += 1
 
     try:
-        pd.DataFrame(product_info_dict).to_csv(f"./data/products/{cat_name}.csv", index=False)
+        pd.DataFrame(product_info_dict).to_csv(f"../../data/products/{cat_name}.csv", index=False)
         logging.info("Safely saved product data for category %s", cat_name)
     except Exception as e:
         logging.error("Error saving product data for category %s \n%s", cat_name, e)
 
     try:
-        pd.DataFrame(list(reviewer_list), columns=["user_code"]).to_csv(f"./data/{cat_name}_reviewers.csv", index=False)
+        pd.DataFrame(list(reviewer_list), columns=["user_code"]).to_csv(f"../../data/{cat_name}_reviewers.csv", index=False)
         logging.info("Safely saved reviewer data for category %s", cat_name)
     except Exception as e:
         logging.error("Error saving reviewer data for category %s \n%s", cat_name, e)
@@ -360,11 +360,11 @@ def scrape_product_reviews(product_url_dict):
 # main function
 if __name__ == "__main__":
     # product_url_df = pd.read_csv(sys.argv[1])
-    product_url_df = pd.read_csv("./data/url/url_0.csv")
+    product_url_df = pd.read_csv("../../data/url/url_0.csv")
     product_url_dict = product_url_df.to_dict("list")
     try:
         logging.info("========== [%s Crawling Start] ==========", product_url_df.columns[0])
         scrape_product_reviews(product_url_dict)
         logging.info("========== [%s Crawling Finish] ==========", product_url_df.columns[0])
     finally:
-        pd.DataFrame(error_list).to_csv("./data/error/error_list.csv", index=False)
+        pd.DataFrame(error_list).to_csv("../../data/error/error_list.csv", index=False)
