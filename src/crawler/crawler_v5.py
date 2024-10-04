@@ -8,8 +8,6 @@ import sys
 import pandas as pd
 from tqdm import tqdm
 
-import requests
-from fake_useragent import UserAgent
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
@@ -30,6 +28,7 @@ chrome_options.add_argument('--disable-blink-features=AutomationControlled')
 service = Service()
 
 error_list = defaultdict(list)
+HEADER = ""
 
 ########################################################################################################################
 
@@ -43,7 +42,7 @@ def extract_element_text(driver, parent_element, css_selector, url, wait=True, t
         result = element.text.strip()
         return result
     except Exception as e:
-        logging.error("%s exception for %s at %s", type(e).__name__, css_selector, url)
+        logging.error("[%s] %s exception for %s at %s", HEADER, type(e).__name__, css_selector, url)
         return None
 
 def extract_element(driver, parent_element, css_selector, url, wait=True, timeout=10):
@@ -55,7 +54,7 @@ def extract_element(driver, parent_element, css_selector, url, wait=True, timeou
         element = parent_element.find_element(By.CSS_SELECTOR, css_selector)
         return element
     except Exception as e:
-        logging.error("%s exception for %s at %s", type(e).__name__, css_selector, url)
+        logging.error("[%s] %s exception for %s at %s", HEADER, type(e).__name__, css_selector, url)
         return None
 
 def extract_element_text_list(driver, parent_element, css_selector, url, wait=True, timeout=10):
@@ -68,7 +67,7 @@ def extract_element_text_list(driver, parent_element, css_selector, url, wait=Tr
         result = [element.text.strip() for element in elements]
         return result
     except Exception as e:
-        logging.error("%s exception for %s at %s", type(e).__name__, css_selector, url)
+        logging.error("[%s] %s exception for %s at %s", HEADER, type(e).__name__, css_selector, url)
         return []
 
 def extract_element_list(driver, parent_element, css_selector, url, wait=True, timeout=10):
@@ -80,13 +79,13 @@ def extract_element_list(driver, parent_element, css_selector, url, wait=True, t
         elements = parent_element.find_elements(By.CSS_SELECTOR, css_selector)
         return elements
     except Exception as e:
-        logging.error("%s exception for %s at %s", type(e).__name__, css_selector, url)
+        logging.error("[%s] %s exception for %s at %s", HEADER, type(e).__name__, css_selector, url)
         return []
 
 ########################################################################################################################
 
 def extract_product_info(driver, url):
-    logging.info("[extract_product_info] Start")
+    logging.info("[%s] [extract_product_info] Start", HEADER)
     brand_name, product_name, product_flags = None, None, []
     review_cnt, overall_rating = None, None
 
@@ -98,7 +97,7 @@ def extract_product_info(driver, url):
             EC.visibility_of_all_elements_located((By.CSS_SELECTOR, "div.left_area > div.prd_social_info > p#repReview"))
         )
     except Exception as e:
-        logging.error("Error extracting product info from %s \n%s", url, e)
+        logging.error("[%s] Error extracting product info from %s \n%s", HEADER, url, e)
 
     product_info = extract_element(driver, driver, "div.right_area > div.prd_info", url, True, 20)
     product_social_info = extract_element(driver, driver, "div.left_area > div.prd_social_info", url, True, 20)
@@ -111,8 +110,8 @@ def extract_product_info(driver, url):
     review_cnt = int(review_cnt_txt.strip("()").strip("건").replace(",", ""))
     overall_rating = float(extract_element_text(driver, product_social_info, "p#repReview > b", url, False))
 
-    logging.info("[extract_product_info] Finished with: brand_name=%s, product_name=%s, review_cnt=%d, overall_rating=%f",
-                 brand_name, product_name, review_cnt, overall_rating)
+    logging.info("[%s] [extract_product_info] Finished with: brand_name=%s, product_name=%s, review_cnt=%d, overall_rating=%f",
+                 HEADER, brand_name, product_name, review_cnt, overall_rating)
 
     return {
         "brand_name": brand_name,
@@ -127,30 +126,30 @@ def extract_product_info(driver, url):
 
 def extract_ingredients(driver, url):
     try:
-        logging.info("[extract_ingredients] START")
+        logging.info("[%s] [extract_ingredients] START", HEADER)
 
         element = WebDriverWait(driver, 20).until(
             EC.element_to_be_clickable((By.CSS_SELECTOR, "li#buyInfo"))
         )
         element.click()
-        logging.info("The ingredient tab has been successfully clicked")
+        logging.info("[%s] The ingredient tab has been successfully clicked", HEADER)
 
     except (NoSuchElementException, TimeoutException, StaleElementReferenceException) as e:
-        logging.error("%s occurred while extracting ingredients for %s \n%s", type(e).__name__, url, e)
+        logging.error("[%s] %s occurred while extracting ingredients for %s \n%s", type(e).__name__, url, e)
     except Exception as e:
-        logging.error("Unexpected error while extracting ingredients for %s \n%s", url, e)
+        logging.error("[%s] Unexpected error while extracting ingredients for %s \n%s", HEADER, url, e)
 
     product_info_list = extract_element_list(driver, driver, "div#artcInfo > dl.detail_info_list", url)
-    logging.info("The product information list is like %s", product_info_list)
+    logging.info("[%s] The product information list is like %s", HEADER, product_info_list)
 
     for product_info in product_info_list[1:]:
         dt_text = extract_element_text(driver, product_info, "dt", url, False)
         if dt_text == "화장품법에 따라 기재해야 하는 모든 성분":
             ingredients = extract_element_text(driver, product_info, "dd", url, False)
-            logging.info("[extract_ingredients] FINISH")
+            logging.info("[%s] [extract_ingredients] FINISH", HEADER)
             return ingredients
 
-    logging.warning("No ingredient information found for %s", url)
+    logging.warning("[%s] No ingredient information found for %s", HEADER, url)
 
     error_list["url"].append(url)
     error_list["reason"].append("ingredients error")
@@ -159,7 +158,7 @@ def extract_ingredients(driver, url):
 ########################################################################################################################
 
 def extract_reviews(driver, product_info):
-    logging.info("[extract_reviews] START")
+    logging.info("[%s] [extract_reviews] START", HEADER)
 
     review_info_dict = defaultdict(list)
 
@@ -168,45 +167,45 @@ def extract_reviews(driver, product_info):
             EC.element_to_be_clickable((By.CSS_SELECTOR, "li#reviewInfo"))
         )
         element.click()
-        logging.info("The review tab has been successfully clicked")
+        logging.info("[%s] The review tab has been successfully clicked", HEADER)
 
         WebDriverWait(driver, 10).until(
             EC.visibility_of_all_elements_located((By.CSS_SELECTOR, "div.review_list_wrap"))
         )
 
     except (NoSuchElementException, TimeoutException, StaleElementReferenceException) as e:
-        logging.error("%s occurred while preparing reviews for %s \n%s", type(e).__name__, product_info["url"], e)
+        logging.error("[%s] %s occurred while preparing reviews for %s \n%s", HEADER, type(e).__name__, product_info["url"], e)
         error_list["url"].append(product_info["url"])
         error_list["reason"].append("review count error")
         return review_info_dict
     except Exception as e:
-        logging.error("Unexpected %s occurred while preparing reviews for %s \n%s", type(e).__name__, product_info["url"], e)
+        logging.error("[%s] Unexpected %s occurred while preparing reviews for %s \n%s", HEADER, type(e).__name__, product_info["url"], e)
         error_list["url"].append(product_info["url"])
         error_list["reason"].append("review count error")
         return review_info_dict
 
     pages = min(10, (product_info["review_cnt"] // 10) + 1)
-    for page in tqdm(range(1, pages + 1), desc="Page", position=1, leave=False):
+    for page in range(1, pages + 1):
         try:
             if page != 1:
                 next_page_element = WebDriverWait(driver, 10).until(
                     EC.element_to_be_clickable((By.CSS_SELECTOR, f"div.pageing > a[data-page-no='{page}']"))
                 )
                 next_page_element.click()
-                logging.info("The next review page button has been successfully clicked")
+                logging.info("[%s] The next review page button has been successfully clicked", HEADER)
                 time.sleep(2)
         except (NoSuchElementException, TimeoutException, StaleElementReferenceException) as e:
-            logging.error("%s occurred while navigating to page %d for %s \n%s", type(e).__name__, page, product_info["url"], e)
+            logging.error("[%s] %s occurred while navigating to page %d for %s \n%s", HEADER, type(e).__name__, page, product_info["url"], e)
             error_list["url"].append(product_info["url"])
             error_list["reason"].append(f"navigating to page error on {page}")
         except Exception as e:
-            logging.error("Unexpected %s occurred while navigating to page %d for %s \n%s", type(e).__name__, page, product_info["url"], e)
+            logging.error("[%s] Unexpected %s occurred while navigating to page %d for %s \n%s", HEADER, type(e).__name__, page, product_info["url"], e)
             error_list["url"].append(product_info["url"])
             error_list["reason"].append(f"navigating to page error on {page}")
 
         review_list = extract_element_list(driver, driver, "ul#gdasList > li", product_info["url"])
         for idx, review in enumerate(review_list):
-            logging.info("===== New review start ======")
+            logging.info("===== [%s] New review start ======", HEADER)
             try:
                 WebDriverWait(driver, 10).until(
                     EC.visibility_of_all_elements_located((By.CSS_SELECTOR, "div#Contents div.review_wrap div.info > div.user > p.info_user"))
@@ -216,11 +215,11 @@ def extract_reviews(driver, product_info):
                 )
 
             except (NoSuchElementException, TimeoutException, StaleElementReferenceException) as e:
-                logging.error("%s occurred while extracting review[%d] on page %d for %s \n%s", type(e).__name__, idx, page, product_info["url"], e)
+                logging.error("[%s] %s occurred while extracting review[%d] on page %d for %s \n%s", HEADER, type(e).__name__, idx, page, product_info["url"], e)
                 error_list["url"].append(product_info["url"])
                 error_list["reason"].append(f"extracting review error review[{idx}] on page {page}")
             except Exception as e:
-                logging.error("Unexpected %s occurred while extracting review[%d] on page %d for %s \n%s", type(e).__name__, idx, page, product_info["url"], e)
+                logging.error("[%s] Unexpected %s occurred while extracting review[%d] on page %d for %s \n%s", HEADER, type(e).__name__, idx, page, product_info["url"], e)
                 error_list["url"].append(product_info["url"])
                 error_list["reason"].append(f"extracting review error review[{idx}] on page {page}")
 
@@ -232,46 +231,46 @@ def extract_reviews(driver, product_info):
             if user_link:
                 user_code_match = re.search(r"'([A-Za-z0-9+/=]+)'", user_link.get_attribute("onclick"))
                 user_code = user_code_match.group(1) if user_code_match else None
-            logging.info("User Code is %s", user_code)
+            logging.info("[%s]User Code is %s", HEADER, user_code)
             
             user_id = extract_element_text(driver, user_info, "p.info_user > a.id", product_info["url"], False)
-            logging.info("User ID is %s", user_id)
+            logging.info("[%s]User ID is %s", HEADER, user_id)
 
             user_skin_type = extract_element_text_list(driver, user_info, "p.tag > span", product_info["url"], False)
             user_skin_type = ",".join(user_skin_type)
-            logging.info("User Skin Type is %s", user_skin_type)
+            logging.info("[%s]User Skin Type is %s", HEADER, user_skin_type)
             
-            user_tag_list = extract_element_text_list(driver, user_info, "div.badge > a.point_flag", product_info["url"], False)
+            user_tag_list = extract_element_text_list(driver, user_info, "div.badge > div > a.point_flag", product_info["url"], False)
             user_tag = ",".join(user_tag_list)
-            logging.info("User Tag is %s", user_tag)
+            logging.info("[%s]User Tag is %s", HEADER, user_tag)
 
 
             # Review Information
             review_info = extract_element(driver, review, "div.review_cont", product_info["url"])
             
             review_rating = extract_element_text(driver, review_info, "div.score_area > span.review_point > span.point", product_info["url"], False)
-            logging.info("Review Rating is %s", review_rating)
+            logging.info("[%s] Review Rating is %s", HEADER, review_rating)
             
             review_date = extract_element_text(driver, review_info, "div.score_area > span.date", product_info["url"], False)
-            logging.info("Review Date is %s", review_date)
+            logging.info("[%s] Review Date is %s", HEADER, review_date)
 
             purchase_channel = extract_element_text(driver, review_info, "div.score_area > span.ico_offlineStore", product_info["url"], False) or "온라인"
-            logging.info("The place item puchased is %s", purchase_channel)
+            logging.info("[%s] The place item puchased is %s", HEADER, purchase_channel)
 
             review_poll = {}
             poll_samples = extract_element_list(driver, review_info, "div.poll_sample dl.poll_type1", product_info["url"], False)
-            logging.info("Review poll is %s", poll_samples)
+            logging.info("[%s] Review poll is %s", HEADER, poll_samples)
             for poll_sample in poll_samples:
                 poll_question = extract_element_text(driver, poll_sample, "dt > span", product_info["url"], False)
                 poll_answer = extract_element_text(driver, poll_sample, "dd > span", product_info["url"], False)
                 review_poll[poll_question] = poll_answer
-            logging.info("Review poll is %s", review_poll)
+            logging.info("[%s] Review poll is %s", HEADER, review_poll)
 
             review_text = extract_element_text(driver, review_info, "div.txt_inner", product_info["url"], False)
-            logging.info("User Review is %s", review_text)
+            logging.info("[%s] User Review is %s", HEADER, review_text)
 
             recommend_num = extract_element_text(driver, review_info, "div.recom_area button span.num", product_info["url"], False)
-            logging.info("Times the review recommended is %s", recommend_num)
+            logging.info("[%s] Times the review recommended is %s", HEADER, recommend_num)
 
 
             # Insert information
@@ -288,12 +287,10 @@ def extract_reviews(driver, product_info):
                 review_info_dict[key].append(value)
             review_info_dict["review"].append(review_text)
             review_info_dict["recommend_num"].append(recommend_num)
+            
+            time.sleep(2)
 
-                
-        
-        
-
-    logging.info("[extract_reviews] FINISH")
+    logging.info("[%s] [extract_reviews] FINISH", HEADER)
 
     return review_info_dict
 
@@ -310,15 +307,15 @@ def scrape_product_reviews(product_url_dict):
         # ua = UserAgent()
         # user_angent = ua.random
         # chrome_options.add_argument(f'user-agent={user_angent}')
-        # logging.info("Create a new user-agent ==> %s", user_angent)
+        # logging.info([%s] "Create a new user-agent ==> %s", user_angent)
         with webdriver.Chrome(service=service, options=chrome_options) as driver:
-            logging.info("====== New URL Start =======")
-            logging.info("URL: %s", url)
+            logging.info("====== [%s] New URL Start =======", HEADER)
+            logging.info("[%s] URL: %s", HEADER, url)
             driver.get(url)
 
             product_info = extract_product_info(driver, url)
             ingredients = extract_ingredients(driver, url)
-            logging.info("Ingredients are %s", ingredients)
+            logging.info("[%s] Ingredients are %s", HEADER, ingredients)
             reviews = extract_reviews(driver, product_info)
 
             product_info_dict["category"].append(cat_name)
@@ -332,39 +329,40 @@ def scrape_product_reviews(product_url_dict):
 
             reviewer_list.update(reviews["user_code"])
 
-            time.sleep(5)
-
             try:
                 os.makedirs(f"../../data/reviews/{cat_name}", exist_ok=True)
                 pd.DataFrame(reviews).to_csv(f"../../data/reviews/{cat_name}/{cat_name}_{product_num}_reviews.csv", index=False)
-                logging.info("Safely saved reviews for %s", product_info["product_name"])
+                logging.info("[%s] Safely saved reviews for %s", HEADER, product_info["product_name"])
             except Exception as e:
-                logging.error("Error saving reviews for %s_%s \n%s", cat_name, product_info["product_name"], e)
+                logging.error("[%s] Error saving reviews for %s_%s \n%s", HEADER, cat_name, product_info["product_name"], e)
             finally:
                 product_num += 1
+                
+        time.sleep(5)
 
     try:
         pd.DataFrame(product_info_dict).to_csv(f"../../data/products/{cat_name}.csv", index=False)
-        logging.info("Safely saved product data for category %s", cat_name)
+        logging.info("[%s] Safely saved product data for category %s", HEADER, cat_name)
     except Exception as e:
-        logging.error("Error saving product data for category %s \n%s", cat_name, e)
+        logging.error("[%s] Error saving product data for category %s \n%s", HEADER, cat_name, e)
 
     try:
         pd.DataFrame(list(reviewer_list), columns=["user_code"]).to_csv(f"../../data/{cat_name}_reviewers.csv", index=False)
-        logging.info("Safely saved reviewer data for category %s", cat_name)
+        logging.info("[%s] Safely saved reviewer data for category %s", HEADER, cat_name)
     except Exception as e:
-        logging.error("Error saving reviewer data for category %s \n%s", cat_name, e)
+        logging.error("[%s] Error saving reviewer data for category %s \n%s", HEADER, cat_name, e)
 
 ########################################################################################################################
 
 # main function
 if __name__ == "__main__":
-    # product_url_df = pd.read_csv(sys.argv[1])
-    product_url_df = pd.read_csv("../../data/url/url_0.csv")
+    product_url_df = pd.read_csv(sys.argv[1])
+    # product_url_df = pd.read_csv("../../data/url/url_0.csv")
     product_url_dict = product_url_df.to_dict("list")
+    HEADER = product_url_df.columns[0]
     try:
-        logging.info("========== [%s Crawling Start] ==========", product_url_df.columns[0])
+        logging.info("========== [%s] [Crawling Start] ==========", HEADER)
         scrape_product_reviews(product_url_dict)
-        logging.info("========== [%s Crawling Finish] ==========", product_url_df.columns[0])
+        logging.info("========== [%s] [Crawling Finish] ==========", HEADER)
     finally:
         pd.DataFrame(error_list).to_csv("../../data/error/error_list.csv", index=False)
