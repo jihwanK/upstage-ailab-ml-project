@@ -21,7 +21,7 @@ cat_names = [
 ]
 
 product_url_dict = {}
-for i, cat_num in enumerate(tqdm(cat_nums)):
+for i, cat_num in enumerate(tqdm(cat_nums, desc="Collect URLs")):
     url_list = []
     page = f"https://www.oliveyoung.co.kr/store/main/getBestList.do?dispCatNo=900000100100001&fltDispCatNo={cat_num}"
     logging.info("[START] Crawl %s URLs", cat_names[i])

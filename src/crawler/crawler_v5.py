@@ -296,14 +296,14 @@ def extract_reviews(driver, product_info):
 
 ########################################################################################################################
 
-def scrape_product_reviews(product_url_dict):
+def scrape_product_reviews(product_url_dict, position=1):
     reviewer_list = set()
     product_info_dict = defaultdict(list)
     product_num = 0
 
     cat_name, product_urls = product_url_dict.popitem()
 
-    for url in tqdm(product_urls, desc="URL", position=0):
+    for url in tqdm(product_urls, desc=f"[{HEADER}] URL", position=position):
         # ua = UserAgent()
         # user_angent = ua.random
         # chrome_options.add_argument(f'user-agent={user_angent}')
@@ -358,11 +358,12 @@ def scrape_product_reviews(product_url_dict):
 if __name__ == "__main__":
     product_url_df = pd.read_csv(sys.argv[1])
     # product_url_df = pd.read_csv("../../data/url/url_0.csv")
+    position = int(sys.argv[2]) if len(sys.argv) > 2 else 1
     product_url_dict = product_url_df.to_dict("list")
     HEADER = product_url_df.columns[0]
     try:
         logging.info("========== [%s] [Crawling Start] ==========", HEADER)
-        scrape_product_reviews(product_url_dict)
+        scrape_product_reviews(product_url_dict, position)
         logging.info("========== [%s] [Crawling Finish] ==========", HEADER)
     finally:
         pd.DataFrame(error_list).to_csv("../../data/error/error_list.csv", index=False)
