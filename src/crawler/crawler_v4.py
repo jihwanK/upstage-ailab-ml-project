@@ -68,7 +68,7 @@ def extract_element_text_list(driver, parent_element, css_selector, url, timeout
     except TimeoutException as e:
         logging.error("%s exception for %s at %s", type(e).__name__, css_selector, url)
     return extract_with_error_handling(
-        lambda: [element.text.strip() for element in parent_element.find_elements(By.CSS_SELECTOR, css_selector)],
+        lambda: [flag.text.strip() for flag in parent_element.find_elements(By.CSS_SELECTOR, css_selector)],
         css_selector,
         url,
         default=[]
