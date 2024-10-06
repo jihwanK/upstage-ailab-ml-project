@@ -33,32 +33,35 @@ outs:
   - relpath: Soomin/user_review_data/review_data1_3.csv
     md5: a210355b5049ec555b3a081d8ea0418d
   - relpath: jihwan/products/더모코스메틱.csv
-    md5: fd5fd912f981ff97e8f3bb663794d800
-    size: 120333
+    md5: b14f2444fdbeba76ed38be17fa34a88e
+    size: 120324
   - relpath: jihwan/products/마스크팩.csv
-    md5: d9bf3a0ea24b20d68e20c0d019aad647
-    size: 49048
+    md5: f9c0129efeafb7e07505807b0ef66e96
+    size: 152944
   - relpath: jihwan/products/맨즈케어.csv
-    md5: 0ad7a817f2383f678b4a1595ba17a840
-    size: 151018
+    md5: c19715dd42fcb199b7817b2557428981
+    size: 151012
   - relpath: jihwan/products/메이크업.csv
-    md5: f4ce0d65b15e7c65ca3f1af3524e4ef6
-    size: 1456762
+    md5: 2eee673317c052666f95124403cd9e27
+    size: 1456742
+  - relpath: jihwan/products/미용소품.csv
+    md5: 5592448289b4cd10cc0c9cec983fbb72
+    size: 32606
   - relpath: jihwan/products/바디케어.csv
-    md5: bb27a693e97cb7746435fceaf4be8b81
-    size: 170660
+    md5: bbe5242b8eba954ce73410c61bd5dd56
+    size: 170647
   - relpath: jihwan/products/선케어.csv
-    md5: 4dd1a7d4e2a5bc9c8c1b0bb7b848f624
-    size: 180159
+    md5: 78cf59e6b35658233dc45505a5b155df
+    size: 180173
   - relpath: jihwan/products/스킨케어.csv
-    md5: e4bcfb9fa1010bd301a0df7d195507e1
-    size: 18877
+    md5: 5e608d983011275050b332a3e7975405
+    size: 159611
   - relpath: jihwan/products/클렌징.csv
-    md5: d1d9d86cf09cee82e33b4d832c0da428
-    size: 114460
+    md5: accf22a4eab7d39924738ef7938f7cb1
+    size: 114458
   - relpath: jihwan/products/헤어케어.csv
-    md5: 93c89e70f3fde6e347a2fa8dfa276026
-    size: 73703
+    md5: db9c3c625959496ce31ccf60fb40f44d
+    size: 164604
   - relpath: jihwan/reviews/더모코스메틱/더모코스메틱_0_reviews.csv
     md5: f1a82e456ad26b66efa66588618268f5
     size: 88067

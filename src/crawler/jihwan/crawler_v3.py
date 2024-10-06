@@ -293,7 +293,7 @@ def scrape_product_reviews(product_url_dict):
             logging.error("Error saving data for category %s \n%s", cat_name, e)
 
     try:
-        pd.DataFrame(list(reviewer_list), columns=["user_code"]).to_csv("../../data/reviewers.csv", index=False)
+        pd.DataFrame(list(reviewer_list), columns=["user_code"]).to_csv(f"../../data/{sys.argv[1]}_reviewers.csv", index=False)
     except Exception as e:
         print("Error saving reviewer data")
         logging.error("Error saving reviewer data \n%s", e)
@@ -305,5 +305,5 @@ if __name__ == "__main__":
     try:
         scrape_product_reviews(product_url_dict)
     finally:
-        pd.DataFrame(error_list).to_csv("../../data/error/error_list.csv", index=False)
+        pd.DataFrame(error_list).to_csv(f"../../data/error/error_{sys.argv[1]}_list.csv", index=False)
 
