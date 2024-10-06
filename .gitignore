@@ -395,5 +395,9 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+
+
+## Customised files
 *chromedriver*
 /data
+playgroud.ipynb
