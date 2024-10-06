@@ -32,6 +32,12 @@ outs:
     md5: 645a95269ea84c679bdca242e9cb38ac
   - relpath: Soomin/user_review_data/review_data1_3.csv
     md5: a210355b5049ec555b3a081d8ea0418d
+  - relpath: hyeyoung/combined_data.csv
+    md5: c8121de0d5cbb016c846ccffd166b726
+    size: 8041015
+  - relpath: hyeyoung/combined_data.xlsx
+    md5: 044388910ae47a1fb3b12f697f32ea93
+    size: 1837270
   - relpath: jihwan/products/더모코스메틱.csv
     md5: b14f2444fdbeba76ed38be17fa34a88e
     size: 120324
