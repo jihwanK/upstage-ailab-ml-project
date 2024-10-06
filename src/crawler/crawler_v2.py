@@ -6,6 +6,7 @@ import logging
 
 import pandas as pd
 from tqdm import tqdm
+from tqdm import tqdm
 
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
@@ -256,6 +257,7 @@ def scrape_product_reviews(product_url_dict):
                     product_info = extract_product_info(driver, url)
                     ingredients = extract_ingredients(driver, url)
                     reviews, review_cnt, overall_rating = extract_reviews(driver, product_info)
+                    reviews, review_cnt, overall_rating = extract_reviews(driver, product_info)
 
                     product_info_dict["category"].append(cat_name)
                     product_info_dict["product_name"].append(product_info["product_name"])
@@ -264,6 +266,7 @@ def scrape_product_reviews(product_url_dict):
                     product_info_dict["url"].append(url)
                     product_info_dict["ingredients"].append(ingredients)
 
+                    reviews, review_cnt, overall_rating = extract_reviews(driver, product_info)
                     product_info_dict["review_cnt"].append(review_cnt)
                     product_info_dict["overall_rating"].append(overall_rating)
 
@@ -272,9 +275,8 @@ def scrape_product_reviews(product_url_dict):
                     time.sleep(2)
 
                     try:
-                        os.makedirs(f"../../data/reviews/{cat_name}", exist_ok=True)
-                        pd.DataFrame(reviews).to_csv(f"../../data/reviews/{cat_name}/{cat_name}_{product_num}_reviews.csv", index=False)
-                        logging.info("Safely saved %s", {product_info['product_name']})
+                        pd.DataFrame(reviews).to_csv(f"../../data/reviews/{cat_name}_{product_info['product_name']}_reviews.csv", index=False)
+                        pd.DataFrame(product_info_dict).to_csv(f"../../data/products/{cat_name}_{product_info['product_name']}.csv", index=False)
                     except Exception as e:
                         print(f"Error saving data for category {cat_name}_{product_info['product_name']}")
                         logging.error("Error saving data for category %s_%s \n%s", cat_name,product_info['product_name'], e)
