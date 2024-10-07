@@ -68,6 +68,12 @@ outs:
   - relpath: jihwan/products/헤어케어.csv
     md5: db9c3c625959496ce31ccf60fb40f44d
     size: 164604
+  - relpath: jihwan/products_total.csv
+    md5: 385cc342e8b5dfd0d1e998d9a76b9c00
+    size: 2706220
+  - relpath: jihwan/reviews.csv
+    md5: 22023fc7810ad53695eacb081ff54a3e
+    size: 13498766
   - relpath: jihwan/reviews/더모코스메틱/더모코스메틱_0_reviews.csv
     md5: f1a82e456ad26b66efa66588618268f5
     size: 88067
@@ -2828,6 +2834,9 @@ outs:
   - relpath: jihwan/reviews/헤어케어/헤어케어_9_reviews.csv
     md5: 60e2262b2167fd94518c9c43248cbd0a
     size: 59818
+  - relpath: jihwan/reviews_total.csv
+    md5: dc6bc3a8098560011d895782cef6cb09
+    size: 51305081
   - relpath: jihwan/url/url_0.csv
     md5: 1562eec4e76733923629888809d77df4
     size: 20102
