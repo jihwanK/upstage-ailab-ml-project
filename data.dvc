@@ -68,6 +68,9 @@ outs:
   - relpath: jihwan/products/헤어케어.csv
     md5: db9c3c625959496ce31ccf60fb40f44d
     size: 164604
+  - relpath: jihwan/reviews.csv
+    md5: 22023fc7810ad53695eacb081ff54a3e
+    size: 13498766
   - relpath: jihwan/reviews/더모코스메틱/더모코스메틱_0_reviews.csv
     md5: f1a82e456ad26b66efa66588618268f5
     size: 88067
