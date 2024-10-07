@@ -3,7 +3,8 @@ outs:
   path: data
   files:
   - relpath: Soomin/cleaned_df.csv
-    md5: d31b2e76a889650a6b8e623852b99da6
+    md5: 2b3e193202f895aa468428e556c0d063
+    size: 487533365
   - relpath: Soomin/total.csv
     md5: f9d39ed1d828084ff81ba6c932893229
   - relpath: Soomin/user_data/product_review_df1.csv
@@ -32,6 +33,15 @@ outs:
     md5: 645a95269ea84c679bdca242e9cb38ac
   - relpath: Soomin/user_review_data/review_data1_3.csv
     md5: a210355b5049ec555b3a081d8ea0418d
+  - relpath: Soomin/user_review_data/review_data1_4.csv
+    md5: 9d4f308c861aca7ec5fc255ff69f9896
+    size: 107800410
+  - relpath: Soomin/user_review_data/review_data1_5.csv
+    md5: 45eb967e46c3414bc6f2e75fbd3e0fe5
+    size: 103755638
+  - relpath: Soomin/user_review_data/review_data1_6.csv
+    md5: 4c7922c26855f22afa892c8a5ac82fb1
+    size: 79481572
   - relpath: hyeyoung/combined_data.csv
     md5: c8121de0d5cbb016c846ccffd166b726
     size: 8041015
