@@ -75,11 +75,11 @@ outs:
   - relpath: final/purchase_history_rating.csv
     md5: 4b4de5897ed51f1a1ceff57e3d9cfa33
     size: 12833919
-  - relpath: final/user_id2name.json
-    md5: 2dad659180beef8bfc92cb23062d01b8
-    size: 301697
-  - relpath: final/user_name2id.json
+  - relpath: final/user_code2id.json
     md5: 59cfbbbbfaa383af35287e0b553c0b98
+    size: 301697
+  - relpath: final/user_id2code.json
+    md5: 2dad659180beef8bfc92cb23062d01b8
     size: 301697
   - relpath: hyeyoung/combined_data.csv
     md5: c8121de0d5cbb016c846ccffd166b726
