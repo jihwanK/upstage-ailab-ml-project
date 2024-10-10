@@ -5,6 +5,9 @@ outs:
   - relpath: Soomin/cleaned_df.csv
     md5: 2b3e193202f895aa468428e556c0d063
     size: 487533365
+  - relpath: Soomin/sentiment_df.csv
+    md5: 3944940285ad4c346b9b71f1cb90b78c
+    size: 202276261
   - relpath: Soomin/total.csv
     md5: f9d39ed1d828084ff81ba6c932893229
   - relpath: Soomin/user_data/product_review_df1.csv
