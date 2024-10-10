@@ -401,3 +401,4 @@ $RECYCLE.BIN/
 *chromedriver*
 /data
 playground.ipynb
+**/temp_data
