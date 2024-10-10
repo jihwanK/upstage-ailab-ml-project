@@ -1,9 +1,10 @@
 import streamlit as st
 import json
+import requests
 
 
 def read_json():
-    with open("../../data/final/user_id2code.json", "r", encoding="utf-8") as file:
+    with open("../../../data/final/user_id2code.json", "r", encoding="utf-8") as file:
         id2code = json.load(file)
         return id2code
 
@@ -27,8 +28,11 @@ def login_page():
 
 def get_recommendations(username, category):
     items = [
-        f"{category} Item {i}" for i in range(1, 11)
+        f"{category} Item {i+1}" for i in range(10)
     ]
+    response = requests.get(f"http://127.0.0.1:8000/api/v1/recommend/{st.session_state.id2code[username]}")
+    result = response.json()
+    st.write(result["user_code"])
     return items
 
 def display_recommendations(title, items):
