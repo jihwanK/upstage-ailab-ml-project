@@ -46,8 +46,8 @@ outs:
     md5: 9b85be43181973d0cb3c352f7eb8a43d
     size: 131034461
   - relpath: final/final_compact_products.csv
-    md5: dac2ca5bb3ae85448969580c99b9c100
-    size: 2414414
+    md5: 079ed1acc0998cc704823f119dc4566a
+    size: 2392633
   - relpath: final/final_products_total.csv
     md5: 415b0b63ae920bd9cc83dc3e71309921
     size: 2702329
@@ -60,6 +60,9 @@ outs:
   - relpath: final/final_user_profile.csv
     md5: a84a57bb074bfd64a2b1ad14fa1c05ac
     size: 368760
+  - relpath: final/final_user_profile_ohe.csv
+    md5: 8a6505170582cfa5b0856dffeada3d47
+    size: 492088
   - relpath: final/id2name.json
     md5: 6133e3ba62d04546049e1cac9e1eecc2
     size: 153820
