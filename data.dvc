@@ -42,6 +42,42 @@ outs:
   - relpath: Soomin/user_review_data/review_data1_6.csv
     md5: 4c7922c26855f22afa892c8a5ac82fb1
     size: 79481572
+  - relpath: final/filtered_final_reviews.csv
+    md5: 9b85be43181973d0cb3c352f7eb8a43d
+    size: 131034461
+  - relpath: final/final_compact_products.csv
+    md5: 079ed1acc0998cc704823f119dc4566a
+    size: 2392633
+  - relpath: final/final_products_total.csv
+    md5: 415b0b63ae920bd9cc83dc3e71309921
+    size: 2702329
+  - relpath: final/final_products_with_id.csv
+    md5: a50bf8f6040c93fdc3f20f85f3892b4b
+    size: 2716340
+  - relpath: final/final_review.csv
+    md5: d41102ec412b736673f69e2b254c84a5
+    size: 469574726
+  - relpath: final/final_user_profile.csv
+    md5: a84a57bb074bfd64a2b1ad14fa1c05ac
+    size: 368760
+  - relpath: final/final_user_profile_ohe.csv
+    md5: 8a6505170582cfa5b0856dffeada3d47
+    size: 492088
+  - relpath: final/product_id2name.json
+    md5: 6133e3ba62d04546049e1cac9e1eecc2
+    size: 153820
+  - relpath: final/product_name2id.json
+    md5: 16e0844d46675c5779976dc3970c877c
+    size: 153820
+  - relpath: final/purchase_history_rating.csv
+    md5: 4b4de5897ed51f1a1ceff57e3d9cfa33
+    size: 12833919
+  - relpath: final/user_id2name.json
+    md5: 2dad659180beef8bfc92cb23062d01b8
+    size: 301697
+  - relpath: final/user_name2id.json
+    md5: 59cfbbbbfaa383af35287e0b553c0b98
+    size: 301697
   - relpath: hyeyoung/combined_data.csv
     md5: c8121de0d5cbb016c846ccffd166b726
     size: 8041015
@@ -79,8 +115,8 @@ outs:
     md5: db9c3c625959496ce31ccf60fb40f44d
     size: 164604
   - relpath: jihwan/products_total.csv
-    md5: 385cc342e8b5dfd0d1e998d9a76b9c00
-    size: 2706220
+    md5: ebdc29b14d3a337e8ac582740855d1f6
+    size: 2689320
   - relpath: jihwan/reviews.csv
     md5: 22023fc7810ad53695eacb081ff54a3e
     size: 13498766
@@ -2844,9 +2880,12 @@ outs:
   - relpath: jihwan/reviews/헤어케어/헤어케어_9_reviews.csv
     md5: 60e2262b2167fd94518c9c43248cbd0a
     size: 59818
+  - relpath: jihwan/reviews_nona_rating.csv
+    md5: 4f26114bb021ef28eb172e01b004a267
+    size: 51304046
   - relpath: jihwan/reviews_total.csv
-    md5: dc6bc3a8098560011d895782cef6cb09
-    size: 51305081
+    md5: c238c496f614863a9fc31145944df1d8
+    size: 50782088
   - relpath: jihwan/url/url_0.csv
     md5: 1562eec4e76733923629888809d77df4
     size: 20102
@@ -2877,3 +2916,12 @@ outs:
   - relpath: jihwan/url/url_9.csv
     md5: 0280a0caf9bca93ea31a54c5693e9d90
     size: 20102
+  - relpath: train_eval/review_masked_test.csv
+    md5: d09aef762bfe60546139dfe1fb24bde3
+    size: 21936786
+  - relpath: train_eval/review_test.csv
+    md5: 4454718c015a1e7cf63a2de707445213
+    size: 20515365
+  - relpath: train_eval/review_train.csv
+    md5: c76bc82e5cc73c35a5028c05ce7f62a8
+    size: 82024387
