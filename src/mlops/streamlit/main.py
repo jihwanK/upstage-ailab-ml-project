@@ -5,39 +5,39 @@ import requests
 
 def read_json():
     with open("../../../data/final/user_id2code.json", "r", encoding="utf-8") as file:
-        id2code = json.load(file)
-        return id2code
+        user_id2code = json.load(file)
+    with open("../../../data/final/product_name2id.json", "r", encoding="utf-8") as file:
+        product_name2id = json.load(file)
+
+        return user_id2code, product_name2id
 
 def check_credentials(username):
-    if username in st.session_state.id2code:
-        st.session_state.usercode = st.session_state.id2code[username]
-        return True
-    else:
-        return False
+    return username in st.session_state.user_id2code
 
 def login_page():
-    st.title("Login Page")
+    st.title("올리브영 추천시스템 Login")
     username = st.text_input("Username")
     if st.button("Login"):
         if check_credentials(username):
+            st.session_state.usercode = st.session_state.user_id2code[username]
             st.session_state.logged_in = True
             st.session_state.username = username
             st.rerun()
         else:
             st.error("Invalid username")
 
-def get_recommendations(username, category):
-    items = [
-        f"{category} Item {i+1}" for i in range(10)
-    ]
-    response = requests.get(f"http://127.0.0.1:8000/api/v1/recommend/{st.session_state.id2code[username]}")
-    result = response.json()
-    st.write(result["user_code"])
-    return items
+def get_recommendations(category):
+    response = requests.get(f"http://127.0.0.1:8000/api/v1/recommend/{st.session_state.usercode}", timeout=10)
+    result = json.loads(response.text)
+    # st.write(response.text)
+    items = [ item[0] for item in result[category] ]
+    imgs = [ item for item in result[f"{category}_img"]]
+    return items, imgs
 
-def display_recommendations(title, items):
+def display_recommendations(title, items, imgs):
     st.subheader(title)
-    items_html = ''.join([f'<div class="item">{item}</div>' for item in items])
+    print(imgs)
+    items_html = ''.join([f'<div class="item"><figure><a href="https://www.oliveyoung.co.kr/store/goods/getGoodsDetail.do?goodsNo={st.session_state.product_name2id[item]}"><img src={img} /></a><figcaption>{item}</figcaption></figure></div>' for item, img in zip(items, imgs)])
     st.markdown(f"""
     <div class="scrolling-wrapper">
         {items_html}
@@ -45,10 +45,9 @@ def display_recommendations(title, items):
     """, unsafe_allow_html=True)
 
 def user_main_page():
-    st.title(f"Welcome, {st.session_state.username}!")
-    st.write("Here are your personalized recommendations:")
+    st.title(f"안녕하세요 {st.session_state.username}님")
+    st.write("개인 맞춤형 올리브영 추천시스템에 오신걸 환영합니다 :D")
 
-    # Custom CSS for horizontal scrolling
     st.markdown("""
     <style>
     .scrolling-wrapper {
@@ -59,28 +58,32 @@ def user_main_page():
     }
     .item {
         display: inline-block;
+        vertical-align: top;
         width: 200px;
-        height: 100px;
+        height: 300px;
         border: 1px solid #ddd;
         margin-right: 10px;
+        padding: 10px;
         text-align: center;
-        line-height: 100px;
-        background-color: #f9f9f9;
+        font-size: 16px;
+        color: green;
+        box-sizing: border-box;
+        text-wrap: stable;
     }
     </style>
     """, unsafe_allow_html=True)
 
     with st.container(border=True):
-        books = get_recommendations(st.session_state.username, "Book")
-        display_recommendations("지금까지 구매했던 제품 중 추천!!", books)
+        seen_items, seen_imgs = get_recommendations("seen")
+        display_recommendations("지금까지 구매했던 제품 중 추천!!", seen_items, seen_imgs)
 
     with st.container(border=True):
-        movies = get_recommendations(st.session_state.username, "Movie")
-        display_recommendations("아직까지 구매하지 않았던 제품 추천!!", movies)
+        unseen_items, unseen_imgs = get_recommendations("unseen")
+        display_recommendations("아직까지 구매하지 않았던 제품 추천!!", unseen_items, unseen_imgs)
 
     with st.container(border=True):
-        products = get_recommendations(st.session_state.username, "Product")
-        display_recommendations("올리브영에서 가장 인기있는 제품 추천!!", products)
+        alltime_best, alltime_img = get_recommendations("seen")
+        display_recommendations("올리브영에서 가장 인기있는 제품 추천!!", alltime_best, alltime_img)
 
     if st.button("Refresh Recommendations"):
         st.rerun()
@@ -99,6 +102,6 @@ def main():
         login_page()
 
 if __name__ == "__main__":
-    if "id2code" not in st.session_state:
-        st.session_state.id2code = read_json()
+    if "user_id2code" not in st.session_state:
+        st.session_state.user_id2code, st.session_state.product_name2id = read_json()
     main()
