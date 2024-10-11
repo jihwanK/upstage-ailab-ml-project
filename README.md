@@ -1,9 +1,9 @@
-# Title (Please modify the title)
+# 올리브영 리뷰를 활용한 추천시스템
 ## Team
 
-| ![박패캠](https://avatars.githubusercontent.com/u/156163982?v=4) | ![이패캠](https://avatars.githubusercontent.com/u/156163982?v=4) | ![최패캠](https://avatars.githubusercontent.com/u/156163982?v=4) | ![김패캠](https://avatars.githubusercontent.com/u/156163982?v=4) | ![오패캠](https://avatars.githubusercontent.com/u/156163982?v=4) |
+| ![김지환](https://avatars.githubusercontent.com/u/17960812?v=4) | ![김윤환](https://avatars.githubusercontent.com/u/75008760?v=4) | ![변혜영](https://avatars.githubusercontent.com/u/165775145?v=4) | ![문수민](https://avatars.githubusercontent.com/u/50396041?v=4) | ![최승민](https://avatars.githubusercontent.com/u/127364272?v=4) |
 | :--------------------------------------------------------------: | :--------------------------------------------------------------: | :--------------------------------------------------------------: | :--------------------------------------------------------------: | :--------------------------------------------------------------: |
-|            [박패캠](https://github.com/UpstageAILab)             |            [이패캠](https://github.com/UpstageAILab)             |            [최패캠](https://github.com/UpstageAILab)             |            [김패캠](https://github.com/UpstageAILab)             |            [오패캠](https://github.com/UpstageAILab)             |
+|            [김지환](https://github.com/jihwanK)             |            [김윤환](https://github.com/yoon-py)             |            [변혜영](https://github.com/jenny20240401)             |            [문수민](https://github.com/soomin8442)             |            [최승민](https://github.com/choivember)             |
 |                            팀장, 담당 역할                             |                            담당 역할                             |                            담당 역할                             |                            담당 역할                             |                            담당 역할                             |
 
 ## 0. Overview
