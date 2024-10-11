@@ -6,10 +6,7 @@ import requests
 def read_json():
     with open("../../../data/final/user_id2code.json", "r", encoding="utf-8") as file:
         user_id2code = json.load(file)
-    with open("../../../data/final/product_name2id.json", "r", encoding="utf-8") as file:
-        product_name2id = json.load(file)
-
-        return user_id2code, product_name2id
+        return user_id2code
 
 def check_credentials(username):
     return username in st.session_state.user_id2code
@@ -29,15 +26,23 @@ def login_page():
 def get_recommendations(category):
     response = requests.get(f"http://127.0.0.1:8000/api/v1/recommend/{st.session_state.usercode}", timeout=10)
     result = json.loads(response.text)
-    # st.write(response.text)
+
     items = [ item[0] for item in result[category] ]
-    imgs = [ item for item in result[f"{category}_img"]]
+    imgs = [ item for item in result[f"{category}_img"] ]
     return items, imgs
 
 def display_recommendations(title, items, imgs):
     st.subheader(title)
     print(imgs)
-    items_html = ''.join([f'<div class="item"><figure><a href="https://www.oliveyoung.co.kr/store/goods/getGoodsDetail.do?goodsNo={st.session_state.product_name2id[item]}"><img src={img} /></a><figcaption>{item}</figcaption></figure></div>' for item, img in zip(items, imgs)])
+    items_html = ''.join([
+        f'''<div class="item">
+        <figure>
+        <a href="https://www.oliveyoung.co.kr/store/goods/getGoodsDetail.do?goodsNo={st.session_state.product_name2id[item]}">
+        <img src={img} />
+        </a>
+        <figcaption>{item}</figcaption>
+        </figure>
+        </div>''' for item, img in zip(items, imgs)])
     st.markdown(f"""
     <div class="scrolling-wrapper">
         {items_html}
@@ -103,5 +108,5 @@ def main():
 
 if __name__ == "__main__":
     if "user_id2code" not in st.session_state:
-        st.session_state.user_id2code, st.session_state.product_name2id = read_json()
+        st.session_state.user_id2code = read_json()
     main()
