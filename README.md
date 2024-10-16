@@ -8,85 +8,114 @@
 
 ## 0. Overview
 ### Environment
-- _Write Development environment_
+- Ubuntu 20.04
+- MacOS
+- Windows
 
 ### Requirements
-- _Write Requirements_
+- requirements.txt
 
 ## 1. Competiton Info
 
 ### Overview
 
-- _Write competition information_
+K-Beauty로 대표되는 올리브영은 국내 최대의 Drug store로 상당히 많은 고객이 있습니다. 현재 주요 상권지에 있는 오프라인 매장뿐 아니라 온라인 스토어 역시 성행 중에 있습니다. 특히 굉장히 많은 유저들이 활발히 사용하고 있는 것으로 보이는 올리브영의 온라인 스토어에서는 여러 추천시스템을 적극적으로 활용 중에 있습니다. 저희는 이번 프로젝트를 통해 이 올리브영의 추천시스템을 단순히 비슷한 유저들의 아이템을 추천해주는 것을 넘어 각 제품의 리뷰를 분석하여 유저에게 가장 적합한 아이템을 추천해주려합니다. 
 
-### Timeline
-
-- ex) January 10, 2024 - Start Date
-- ex) February 10, 2024 - Final submission deadline
+### Schedule
+September 30, 2024 ~ October 11, 2024
 
 ## 2. Components
 
 ### Directory
 
-- _Insert your directory structure_
-
-e.g.
-```
-├── code
-│   ├── jupyter_notebooks
-│   │   └── model_train.ipynb
-│   └── train.py
-├── docs
-│   ├── pdf
-│   │   └── (Template) [패스트캠퍼스] Upstage AI Lab 1기_그룹 스터디 .pptx
-│   └── paper
-└── input
-    └── data
-        ├── eval
-        └── train
+```bash
+.
+├── README.md
+├── data.dvc
+├── logs
+│   └── tmp
+├── requirements.txt
+└── src
+    ├── crawler
+    │   ├── jihwan
+    │   │   ├── crawler_partial.py
+    │   │   ├── crawler_product_info.py
+    │   │   ├── crawler_v2.py
+    │   │   ├── crawler_v3.py
+    │   │   ├── crawler_v4.py
+    │   │   ├── crawler_v5.py
+    │   │   ├── run_parallel.py
+    │   │   └── url_crawler.py
+    │   └── soomin
+    │       └── crawler
+    │           ├── crawler2.ipynb
+    │           └── data_processing.ipynb
+    ├── mlops
+    │   ├── api
+    │   │   ├── data_loader.py
+    │   │   ├── img_url.py
+    │   │   ├── main.py
+    │   │   ├── model.py
+    │   │   └── model_loader.py
+    │   └── streamlit
+    │       └── main.py
+    ├── model
+    │   ├── jihwan
+    │   │   ├── NCF.ipynb
+    │   │   ├── collaborative-filtering.ipynb
+    │   │   ├── evaluation.py
+    │   │   └── lightfm.ipynb
+    │   └── soomin
+    │       └── RecSys_Model
+    │           ├── SVD_RecSys copy.ipynb
+    │           ├── SVD_RecSys.ipynb
+    │           ├── model copy.ipynb
+    │           ├── model.ipynb
+    │           └── model_rating_sentiment.ipynb
+    └── preprocessing
+        └── jihwan
+            └── preprocessing.ipynb
 ```
 
 ## 3. Data descrption
 
 ### Dataset overview
+![alt text](./img/image-6.png)
+![alt text](./img/image-7.png)
+![alt text](./img/image-5.png)
+![alt text](./img/image-8.png)
 
-- _Explain using data_
 
-### EDA
+### Sentiment score
 
-- _Describe your EDA process and step-by-step conclusion_
+![alt text](./img/image-12.png)
+![alt text](./img/image-13.png)
 
 ### Data Processing
 
-- _Describe data processing process (e.g. Data Labeling, Data Cleaning..)_
+![alt text](./img/image-11.png)
+![alt text](./img/image-14.png)
+
 
 ## 4. Modeling
 
 ### Model descrition
-
-- _Write model information and why your select this model_
+![alt text](./img/image-10.png)
+![alt text](./img/image-9.png)
 
 ### Modeling Process
 
-- _Write model train and test process with capture_
+![alt text](./img/image-15.png)
 
 ## 5. Result
 
-### Leader Board
+### Output
 
-- _Insert Leader Board Capture_
-- _Write rank and score_
+![alt text](./img/image-16.png)
 
-### Presentation
+## 5. Streamlit + FastAPI
 
-- _Insert your presentaion file(pdf) link_
+### Streamlit
 
-## etc
-
-### Meeting Log
-
-- _Insert your meeting log link like Notion or Google Docs_
-
-### Reference
-
-- _Insert related reference_
+![alt text](./img/image-17.png)
+![alt text](./img/image-18.png)
